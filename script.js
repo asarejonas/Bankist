@@ -61,6 +61,33 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+const displayMovements = function (movements) {
+  containerMovements.innerHTML = '';
+
+  movements.forEach(function (mov, i) {
+    const type = mov < 0 ? `withdrawal` : `deposit`;
+    const html = `
+    <div class="movements__row">
+    <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
+    
+    <div class="movements__value">${Math.abs(mov)}€</div>
+    </div>
+    `;
+    // console.log(html, mov, i);
+
+    containerMovements.insertAdjacentHTML('afterbegin', html);
+  });
+};
+
+const calTotal = function (movement) {
+  const total = movement.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `€ ${total}`;
+};
+
+calTotal(account1.movements);
+
+displayMovements(account2.movements);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -74,7 +101,7 @@ const inputClosePin = document.querySelector('.form__input--pin');
 // const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
-
+/*
 let arr = ['a', 'b', 'c', 'd', 'e'];
 
 // SLICE
