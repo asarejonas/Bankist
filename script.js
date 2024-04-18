@@ -70,7 +70,7 @@ const displayMovements = function (movements) {
     <div class="movements__row">
     <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
     
-    <div class="movements__value">€ ${Math.abs(mov)}</div>
+    <div class="movements__value">${mov} €</div>
     </div>
     `;
     // console.log(html, mov, i);
@@ -79,9 +79,9 @@ const displayMovements = function (movements) {
   });
 };
 
-const calDisplayBalance = function (movements) {
-  const total = movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `€ ${total}`;
+const calDisplayBalance = function (account) {
+  account.balance = account.movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${account.balance} €`;
 };
 
 const calDisplaySummary = function (account) {
@@ -126,6 +126,17 @@ const createUserNames = function (accs) {
 
 createUserNames(accounts);
 
+const upgradeUI = function (acc) {
+  // Display movements
+  displayMovements(acc.movements);
+
+  // Display balance
+  calDisplayBalance(acc);
+
+  //Display summary
+  calDisplaySummary(acc);
+};
+
 // Event Handler
 let currentAccount;
 
@@ -144,7 +155,6 @@ btnLogin.addEventListener('click', function (e) {
       currentAccount.owner.split(' ')[0]
     }`;
 
-    console.log('Login');
     containerApp.style.opacity = 100;
 
     // Clear input fields
@@ -152,16 +162,38 @@ btnLogin.addEventListener('click', function (e) {
     inputLoginUsername.blur();
     inputLoginPin.blur();
 
-    // Display movements
-    displayMovements(currentAccount.movements);
-
-    // Display balance
-    calDisplayBalance(currentAccount.movements);
-
-    //Display summary
-    calDisplaySummary(currentAccount);
+    //update UI
+    upgradeUI(currentAccount);
   }
   // console.log(currentAccount);
+});
+
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault();
+  const amount = Number(inputTransferAmount.value);
+  const recieverAcc = accounts.find(
+    acc => acc.userName === inputTransferTo.value
+  );
+  console.log(currentAccount);
+
+  inputTransferAmount.value = inputTransferTo.value = '';
+
+  if (
+    amount > 0 &&
+    currentAccount.balance >= amount &&
+    recieverAcc &&
+    recieverAcc?.userName !== currentAccount.userName
+  ) {
+    // console.log('Valid transfer');
+    currentAccount.movements.push(-amount);
+    recieverAcc.movements.push(amount);
+
+    upgradeUI(currentAccount);
+    console.log(currentAccount.movements);
+    console.log(recieverAcc.movements);
+  } else {
+    console.log('Transfer not successful');
+  }
 });
 
 /////////////////////////////////////////////////
