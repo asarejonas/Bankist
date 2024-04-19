@@ -196,6 +196,31 @@ btnTransfer.addEventListener('click', function (e) {
   }
 });
 
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  let removeUser = inputCloseUsername.value;
+  let removePIN = Number(inputClosePin.value);
+
+  if (
+    removeUser === currentAccount.userName &&
+    removePIN === currentAccount.pin
+  ) {
+    const accIndex = accounts.findIndex(acc => acc.userName === removeUser);
+
+    // Delete account
+    accounts.splice(accIndex, 1);
+
+    removePIN = removeUser = '';
+    labelWelcome.textContent = 'Log in to get Started!';
+
+    console.log('Account Sucessfully removed');
+    console.log(accounts);
+
+    // Hide UI
+    containerApp.style.opacity = 0;
+  }
+});
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
