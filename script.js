@@ -61,10 +61,19 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovements = function (movements) {
-  containerMovements.innerHTML = '';
+let sorted = false;
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+  // sort = true;
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
+});
 
-  movements.forEach(function (mov, i) {
+const displayMovements = function (movements, sort = false) {
+  containerMovements.innerHTML = '';
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  movs.forEach(function (mov, i) {
     const type = mov < 0 ? `withdrawal` : `deposit`;
     const html = `
     <div class="movements__row">
@@ -126,6 +135,7 @@ const createUserNames = function (accs) {
 
 createUserNames(accounts);
 
+// Upgrage the UI
 const upgradeUI = function (acc) {
   // Display movements
   displayMovements(acc.movements);
@@ -137,6 +147,24 @@ const upgradeUI = function (acc) {
   calDisplaySummary(acc);
 };
 
+// Request a loan
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+  console.log(amount);
+
+  if (
+    amount >= 0 &&
+    amount >= currentAccount.movements.some(mov => mov >= amount * 0.1)
+  ) {
+    // Add the movement
+    currentAccount.movements.push(amount);
+    upgradeUI(currentAccount);
+  }
+  inputLoanAmount.value = '';
+  inputLoanAmount.blur();
+});
 // Event Handler
 let currentAccount;
 
@@ -320,3 +348,11 @@ console.log(totalDepositsUSD);
 //   const loc = acc.owner.find(user => user === 'Jonas Schmedtmann');
 //   console.log(loc);
 // }
+
+console.log(account1.movements);
+console.log(account1.movements.slice().sort());
+
+// return < 0, a, b
+// return > 0, a, b
+console.log(account1.movements.slice().sort((a, b) => a - b));
+console.log(account1.movements.slice().sort((a, b) => b - a));
